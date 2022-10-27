@@ -29,7 +29,8 @@ class StudentController(val studentService: StudentService) {
     fun updateStudent(
         @PathVariable(value = "studentId") studentId: Int,
         @RequestBody newStudent: Student
-    ) {
+    ): Int {
         studentService.updateStudent(studentId, newStudent.name, newStudent.email, newStudent.age)
+        return newStudent.id!!
     }
 }
