@@ -2,7 +2,7 @@ package com.example.gradleCRUDdemo.student
 
 import org.springframework.web.bind.annotation.*
 
-
+@CrossOrigin( maxAge = 3600)
 @RestController
 @RequestMapping("/api/students")
 class StudentController(val studentService: StudentService) {
