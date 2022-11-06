@@ -42,3 +42,15 @@ tasks.withType<Test> {
 	useJUnitPlatform() // Note: automatically generated when creating project
 	finalizedBy(tasks.jacocoTestReport)
 }
+
+//tasks.withType<JacocoReport> {
+//
+//	afterEvaluate {
+//		classDirectories.setFrom(files(classDirectories.files.map {
+//			fileTree(it).apply {
+//				exclude( "**/GradleCrudDemoApplication**")
+//			}
+//		}))
+//	}
+//
+//}

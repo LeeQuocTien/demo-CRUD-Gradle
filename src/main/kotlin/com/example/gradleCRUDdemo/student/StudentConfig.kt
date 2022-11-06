@@ -5,10 +5,10 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class StudentConfig {
+class StudentConfig(val repository: StudentRepository) {
 
     @Bean
-    fun databaseInitializer(repository: StudentRepository) = ApplicationRunner {
+    fun databaseInitializer() = ApplicationRunner {
         repository.save(Student(
             name = "Jerry",
             email = "jerry@gmail.com",
