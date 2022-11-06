@@ -16,8 +16,8 @@ class StudentConfig {
         ))
         repository.save(Student(
             3,
-            "Tom3",
-            "tom3@gmail.com",
+            "Tom",
+            "tom@gmail.com",
             22
         ))
     }

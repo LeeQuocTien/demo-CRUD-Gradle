@@ -3,11 +3,16 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
 	id("org.springframework.boot") version "2.7.5"
 	id("io.spring.dependency-management") version "1.0.15.RELEASE"
+	id("jacoco")
 	kotlin("jvm") version "1.6.21"
 	kotlin("plugin.spring") version "1.6.21"
 	kotlin("plugin.jpa") version "1.6.21"
+
 }
 
+jacoco {
+	toolVersion = "0.8.7"
+}
 group = "com.example"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
@@ -34,5 +39,6 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks.withType<Test> {
-	useJUnitPlatform()
+	useJUnitPlatform() // Note: automatically generated when creating project
+	finalizedBy(tasks.jacocoTestReport)
 }
