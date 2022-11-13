@@ -19,8 +19,17 @@ class StudentService(val repository: StudentRepository) {
         return repository.findById(studentId)
     }
 
-    fun addNewStudent(student: Student) {
-        repository.save(student)
+    fun addNewStudent(student: Student): Student {
+//        if (student.name.isNullOrBlank()) {
+//            throw IllegalArgumentException("Name cannot be missing or empty")
+//        }
+//        if (student.email.isNullOrBlank()) {
+//            throw IllegalArgumentException("Email cannot be missing or empty")
+//        }
+//        if (student.age === null) {
+//            throw IllegalArgumentException("Age cannot be null")
+//        }
+        return repository.save(student)
     }
 
     fun deleteStudent(studentId: Int) {
@@ -30,7 +39,7 @@ class StudentService(val repository: StudentRepository) {
     @Transactional
     fun updateStudent(studentId: Int, name: String?, email: String?, age: Int?): Student {
         val student : Student = repository.findById(studentId).orElseThrow {
-            IllegalStateException(
+            StudentNotFoundException(
                 "student with id $studentId does not exist"
             )
         }
@@ -42,7 +51,7 @@ class StudentService(val repository: StudentRepository) {
         if (email!!.isNotEmpty() && !Objects.equals(student.email, email)
         ) {
             val studentOptional: Optional<Student> = repository.findStudentByEmail(email)
-            check(!studentOptional.isPresent) { "email taken" }
+            if(studentOptional.isPresent) { throw IllegalArgumentException("email taken")  }
             student.email = email
         }
 

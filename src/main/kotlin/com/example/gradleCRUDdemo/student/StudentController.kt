@@ -3,13 +3,25 @@ package com.example.gradleCRUDdemo.student
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import java.util.*
+import javax.validation.Valid
 
 
 @CrossOrigin( maxAge = 3600)
 @RestController
 @RequestMapping("/api/students")
 class StudentController(val studentService: StudentService) {
+
+    @ExceptionHandler
+    fun handleStudentNotFoundException(ex: StudentNotFoundException): ResponseEntity<ErrorMessageModel> {
+        val errorMessage = ErrorMessageModel(
+            HttpStatus.NOT_FOUND.value(),
+            HttpStatus.NOT_FOUND,
+            ex.message
+        )
+        return ResponseEntity(errorMessage, HttpStatus.NOT_FOUND)
+    }
 
     @GetMapping
     fun getStudents(): List<Student> {
@@ -19,20 +31,22 @@ class StudentController(val studentService: StudentService) {
     @GetMapping("/{studentId}")
     fun getStudent(
         @PathVariable(value = "studentId") studentId: Int
-    ): ResponseEntity<Student> {
-        val studentData : Optional<Student> = studentService.getStudent(studentId)
-        return if (studentData.isPresent) {
-            ResponseEntity<Student>(studentData.get(), HttpStatus.OK)
-        } else {
-            ResponseEntity<Student>(HttpStatus.NOT_FOUND)
+    ): Optional<Student> {
+        try {
+            return studentService.getStudent(studentId);
+        } catch (ex: IllegalArgumentException) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, ex.localizedMessage, ex)
         }
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    private fun createNewStudent(@RequestBody student: Student): Student {
-        studentService.addNewStudent(student)
-        return student
+    private fun createNewStudent(@Valid @RequestBody student: Student): Student {
+//        try {
+            return studentService.addNewStudent(student);
+//        } catch (ex: IllegalArgumentException) {
+//            throw ResponseStatusException(HttpStatus.BAD_REQUEST, ex.localizedMessage, ex)
+//        }
     }
 
     @DeleteMapping("/{studentId}")
@@ -45,8 +59,12 @@ class StudentController(val studentService: StudentService) {
     @PutMapping("/{studentId}")
     fun updateStudent(
         @PathVariable(value = "studentId") studentId: Int,
-        @RequestBody newStudent: Student
+        @Valid @RequestBody newStudent: Student
     ): Student {
-        return studentService.updateStudent(studentId, newStudent.name, newStudent.email, newStudent.age)
+        try {
+            return studentService.updateStudent(studentId, newStudent.name, newStudent.email, newStudent.age)
+        } catch (ex: IllegalArgumentException) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, ex.localizedMessage, ex)
+        }
     }
 }
